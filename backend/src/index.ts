@@ -14,10 +14,8 @@ const port = process.env.PORT || 3001;
 
 app.use('/api', apiRoutes);
 
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`Backend running on port ${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`Backend running on port ${port}`);
+});
 
 export default app;
