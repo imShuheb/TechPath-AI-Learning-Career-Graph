@@ -491,3 +491,298 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-dim);
 }
+
+/* ── Mobile Menu Toggle ────────────────── */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 50;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+  background: var(--bg-hover);
+}
+
+.mobile-menu-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Sidebar Overlay (mobile) ──────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Responsive: Tablet (≤1024px) ──────── */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+  }
+
+  .sidebar-header {
+    padding: 16px;
+  }
+
+  .brand {
+    margin-bottom: 20px;
+  }
+
+  .recommendations {
+    padding: 16px;
+  }
+
+  .side-panel {
+    width: 320px;
+    padding: 24px 20px;
+  }
+
+  .panel-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .graph-legend {
+    gap: 12px;
+    padding: 10px 14px;
+    font-size: 10px;
+  }
+}
+
+/* ── Responsive: Mobile (≤768px) ─────── */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    min-width: 300px;
+    z-index: 10;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-header {
+    padding: 16px;
+    padding-top: 72px; /* room for the floating menu button */
+  }
+
+  .skills-grid {
+    max-height: 160px;
+  }
+
+  .graph-area {
+    width: 100%;
+    height: 100vh;
+  }
+
+  /* Legend: horizontal scrollable on mobile */
+  .graph-legend {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    padding: 10px 14px;
+    gap: 12px;
+    font-size: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .graph-legend::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Side panel becomes a bottom sheet on mobile */
+  .side-panel {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 70vh;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 28px;
+    transform: translateY(100%);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .side-panel.open {
+    transform: translateY(0);
+  }
+
+  /* Bottom sheet drag handle indicator */
+  .side-panel::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+
+  .panel-close {
+    top: 16px;
+    right: 16px;
+  }
+
+  .panel-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .badge-section {
+    margin-bottom: 16px;
+  }
+
+  /* Error banner: full width on mobile */
+  .error-banner {
+    left: 12px;
+    right: 12px;
+    transform: none;
+    top: 68px; /* below the menu button */
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+}
+
+/* ── Responsive: Small Phone (≤480px) ──── */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 85vw;
+    min-width: 85vw;
+  }
+
+  .brand h1 {
+    font-size: 18px;
+  }
+
+  .brand-icon {
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .brand {
+    margin-bottom: 16px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+
+  .search-input {
+    font-size: 14px; /* Prevent iOS zoom on focus */
+    padding: 10px 12px 10px 36px;
+  }
+
+  .skill-chip {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .skills-grid {
+    max-height: 140px;
+    gap: 5px;
+  }
+
+  .rec-header h3 {
+    font-size: 13px;
+  }
+
+  .rec-card {
+    padding: 12px 14px;
+  }
+
+  .rec-skill-name {
+    font-size: 13px;
+  }
+
+  .side-panel {
+    max-height: 75vh;
+    padding: 16px 16px 24px;
+  }
+
+  .panel-title {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+  .badge-item {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .graph-legend {
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .mobile-menu-btn {
+    top: 12px;
+    left: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+}

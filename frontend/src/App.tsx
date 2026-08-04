@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import NetworkGraph from './components/NetworkGraph';
 import SidePanel from './components/SidePanel';
-import { Search, BrainCircuit, Compass, AlertTriangle, MousePointerClick } from 'lucide-react';
+import { Search, BrainCircuit, Compass, AlertTriangle, MousePointerClick, Menu, X } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://techpath-ai-learning-career-graph.onrender.com/api';
 axios.defaults.withCredentials = true;
@@ -16,6 +16,23 @@ function App() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on resize past mobile breakpoint
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) setSidebarOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close sidebar when a node is selected (mobile)
+  useEffect(() => {
+    if (selectedNode) setSidebarOpen(false);
+  }, [selectedNode]);
+
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   useEffect(() => {
     setLoading(true);
@@ -57,7 +74,22 @@ function App() {
 
   return (
     <div className="app-layout">
-      <aside className="sidebar">
+      {/* Mobile hamburger toggle */}
+      <button
+        className="mobile-menu-btn"
+        onClick={() => setSidebarOpen(prev => !prev)}
+        aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+      >
+        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Backdrop overlay for mobile sidebar */}
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? 'visible' : ''}`}
+        onClick={closeSidebar}
+      />
+
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="brand">
             <div className="brand-icon">

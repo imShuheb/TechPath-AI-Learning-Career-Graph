@@ -37,13 +37,31 @@ export default function NetworkGraph({ nodes, links, selectedNodeId, onNodeClick
   const fgRef = useRef<any>(null);
   const [hoverNode, setHoverNode] = useState<Node | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  // Track container size for responsive graph sizing
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const updateSize = () => {
+      setDimensions({ width: el.clientWidth, height: el.clientHeight });
+    };
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const isMobile = dimensions.width > 0 && dimensions.width <= 768;
 
   useEffect(() => {
     if (fgRef.current) {
-      fgRef.current.d3Force('charge')?.strength(-300);
-      fgRef.current.d3Force('link')?.distance(120);
+      fgRef.current.d3Force('charge')?.strength(isMobile ? -150 : -300);
+      fgRef.current.d3Force('link')?.distance(isMobile ? 70 : 120);
     }
-  }, [nodes, links]);
+  }, [nodes, links, isMobile]);
 
   const { highlightNodes, highlightLinks } = useMemo(() => {
     const activeId = hoverNode?.id || selectedNodeId;
@@ -97,8 +115,10 @@ export default function NetworkGraph({ nodes, links, selectedNodeId, onNodeClick
         }}
         onNodeClick={(node: any) => {
           if (fgRef.current) {
-            fgRef.current.centerAt(node.x + 105, node.y, 800);
-            fgRef.current.zoom(1.8, 800);
+            // On mobile (bottom sheet), no X offset needed; on desktop shift for side panel
+            const xOffset = isMobile ? 0 : 105;
+            fgRef.current.centerAt(node.x + xOffset, node.y, 800);
+            fgRef.current.zoom(isMobile ? 1.5 : 1.8, 800);
           }
           onNodeClick(node);
         }}
@@ -117,7 +137,7 @@ export default function NetworkGraph({ nodes, links, selectedNodeId, onNodeClick
           const fontSize = Math.max(12 / globalScale, 3);
           const isRole = node.type === 'role';
           const isCompany = node.type === 'company';
-          const radius = isCompany ? 12 : isRole ? 10 : 8;
+          const radius = isCompany ? (isMobile ? 10 : 12) : isRole ? (isMobile ? 8 : 10) : (isMobile ? 6 : 8);
 
           if (active && (hoverNode?.id === node.id || selectedNodeId === node.id)) {
             ctx.beginPath();
