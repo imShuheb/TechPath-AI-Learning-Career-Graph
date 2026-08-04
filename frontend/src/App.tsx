@@ -5,6 +5,7 @@ import SidePanel from './components/SidePanel';
 import { Search, BrainCircuit, Compass, AlertTriangle, MousePointerClick } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://techpath-ai-learning-career-graph.onrender.com/api';
+axios.defaults.withCredentials = true;
 
 function App() {
   const [graphData, setGraphData] = useState<{ nodes: any[]; links: any[] }>({ nodes: [], links: [] });
