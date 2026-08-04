@@ -4,8 +4,8 @@ import { driver } from '../config/db';
 const router = Router();
 
 const formatNode = (node: any) => ({
-  id: node.properties.id,
-  name: node.properties.name || node.properties.title,
+  id: node.properties.id || node.identity?.toString(),
+  name: node.properties.name || node.properties.title || 'Unknown',
   type: node.properties.type || node.labels[0].toLowerCase(),
   label: node.labels[0]
 });
@@ -25,6 +25,7 @@ router.get('/graph', async (req, res) => {
 
     res.json({ nodes, links });
   } catch (error) {
+    console.error('GET /graph error:', error);
     res.status(500).json({ error: 'Failed to fetch graph' });
   } finally {
     await session.close();
@@ -37,6 +38,7 @@ router.get('/skills', async (req, res) => {
     const result = await session.run('MATCH (s:Skill) RETURN s.id AS id, s.name AS name');
     res.json(result.records.map(r => ({ id: r.get('id'), name: r.get('name') })));
   } catch (error) {
+    console.error('GET /skills error:', error);
     res.status(500).json({ error: 'Failed to fetch skills' });
   } finally {
     await session.close();
@@ -68,6 +70,7 @@ router.post('/recommendations', async (req, res) => {
     }));
     res.json(recommendations);
   } catch (error) {
+    console.error('POST /recommendations error:', error);
     res.status(500).json({ error: 'Failed to fetch recommendations' });
   } finally {
     await session.close();
@@ -106,6 +109,7 @@ router.get('/node/:id', async (req, res) => {
 
     res.json({ node, details });
   } catch (error) {
+    console.error('GET /node/:id error:', error);
     res.status(500).json({ error: 'Failed to fetch node details' });
   } finally {
     await session.close();
@@ -139,6 +143,7 @@ router.get('/path/:skillId/:roleId', async (req, res) => {
     }
     res.json({ path: formattedPath });
   } catch (error) {
+    console.error('GET /path error:', error);
     res.status(500).json({ error: 'Failed to fetch path' });
   } finally {
     await session.close();

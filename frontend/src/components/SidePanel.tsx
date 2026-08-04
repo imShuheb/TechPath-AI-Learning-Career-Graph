@@ -7,7 +7,7 @@ interface SidePanelProps {
   onClose: () => void;
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://techpath-ai-learning-career-graph.onrender.com/api';
 
 function BadgeSection({ title, items, icon: Icon }: { title: string; items: any[]; icon: any }) {
   if (!items || items.length === 0) return null;
@@ -44,7 +44,10 @@ export default function SidePanel({ nodeId, onClose }: SidePanelProps) {
     axios
       .get(`${API_BASE}/node/${nodeId}`)
       .then(res => setData(res.data))
-      .catch(() => setError(true))
+      .catch((err) => {
+        console.error(`Failed to fetch node "${nodeId}":`, err.response?.status, err.response?.data || err.message);
+        setError(true);
+      })
       .finally(() => setLoading(false));
   }, [nodeId]);
 
